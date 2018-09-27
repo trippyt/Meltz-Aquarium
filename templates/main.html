@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<head>
+   <title>RPi Web Server</title>
+
+   <script type="text/javascript" src="{{ url_for('static', filename='jquery-2.2.4.min.js') }}"></script>
+   <script type="text/javascript" src="{{ url_for('static', filename='jquery.dragcheck.js') }}"></script>
+
+   <!-- Latest compiled and minified CSS -->
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+   <!-- Optional theme -->
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+   <!-- Latest compiled and minified JavaScript -->
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+   <style type="text/css">
+    .table-check { width: 80%; margin: 0 0 0px; border: 1px solid #ccc; border-collapse: collapse; }
+    .table-check td { border-bottom: 1px solid #ccc; padding: 1px }
+    input[type=checkbox] { margin: 0; transition: transform 0.1s ease-out; vertical-align: bottom }
+    .off {background: #808080}
+    .day {background: #20b2aa}
+    .night {background: #f08080}
+
+        .btn span.glyphicon {
+        opacity: 0;
+    }
+	.form_control {
+    width: 5%;
+    }
+
+    .btn.active span.glyphicon {
+        opacity: 1;
+    }
+    .btn input[type=checkbox] {
+        display: none;
+    }
+    .schedule-btn {
+        width: 100%;
+    }
+    #setnight_btn {
+        background-image: linear-gradient(to bottom,#f08080 0,#c06464 100%);
+    }
+    #setday_btn {
+        background-image: linear-gradient(to bottom,#20b2aa 0,#147974 100%);
+    }
+    #setoff_btn {
+        background-image: linear-gradient(to bottom,#808080 0,#646464 100%);
+    }
+
+    </style>
+</head>
+
+<body>
+   <a href='/logout'>Logout</a>
+   <h1>RPi Web Server</h1>
+   <!--{% for (key, val) in config_state.items() %}
+   <div id="{{key}}">
+        <h2>{{key}} state is <span class="currentval">{{val}}</span></h2>
+        <form id="{{key}}_form">
+            <input type="text" name="new"><br />
+            <input type="button" value="Update" onclick="handleUpdate('{{key}}')">
+        </form>
+    </div>
+   {% endfor %}-->
+
+   <form>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="auto">Auto Mode. Current State:<span class="currentval">unknown</span></label>
+            <select class="form-control" id="auto">
+              <option value="0">Off</option>
+              <option value="1">On</option>
+            </select>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="toggle">Toggle Mode. Current State:<span class="currentval">unknown</span></label>
+            <select class="form-control" id="toggle">
+              <option value="0">Off</option>
+              <option value="1">Day</option>
+              <option value="2">Night</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-row well well-sm text-left">
+        <h2>Auto Schedule</h2>
+        <div class="btn-group" data-toggle="buttons">
+            <table class="table-check text-center">
+                <tr>
+                    {% for i in range(12) %}
+                    <td>
+                        <label class="btn btn-primary checkbox-btn">
+                            <input type="checkbox" id="check_{{i}}" state="off" autocomplete="off">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </label>
+                    </td>
+                    {% endfor %}
+                    <td rowspan="2">
+                        <input class="btn btn-primary schedule-btn" type="button" value="Set Night" id="setnight_btn"><br />
+                        <input class="btn btn-primary schedule-btn" type="button" value="Set Day" id="setday_btn"><br />
+                        <input class="btn btn-primary schedule-btn" type="button" value="Set Off" id="setoff_btn"><br />
+                    </td>
+                </tr>
+                <tr>
+                    {% for i in range(12) %}
+                    <td><label for="check_{{i}}">{{i}}</label></td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for i in range(12,24) %}
+                    <td>
+                        <label class="btn btn-primary checkbox-btn">
+                            <input type="checkbox" id="check_{{i}}" state="off" autocomplete="off">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </label>
+                    </td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for i in range(12,24) %}
+                    <td><label for="check_{{i}}">{{i}}</label></td>
+                    {% endfor %}
+                </tr>
+            </table>
+        </div>
+    </div>
+  </form>
+</body>
+<script>
+$(document).ready(function(){
+    // click&drag stuff for checkboxes
+    var down_idx = -1;
+    var down_state = true;
+    var last_hover_idx = -1;
+    $('.checkbox-btn').mousedown(function(e){
+        down_idx = parseInt($(this).children(':checkbox').attr('id').split('_')[1]);
+        down_state = !$(this).children(':checkbox').is(':checked');
+        last_hover_idx = down_idx;
+    });
+
+    $('.checkbox-btn').hover(function(e){
+        var h_idx = $(this).children(':checkbox').attr('id').split('_')[1];
+        last_hover_idx = h_idx;
+        if (down_idx >= 0) {
+            if( $(this).children(':checkbox').is(':checked') != down_state ){
+                $(this).children(':checkbox').click();
+            }
+        }
+    });
+
+    $(document).mouseup(function(e){
+        up_idx = last_hover_idx;
+        down_idx = -1;
+    });
+    // end click&drag
+
+    $('#auto').on('change', function () {
+        setVal('auto', this.value);
+        getCurrentVal('auto');
+    });
+
+    $('#toggle').on('change', function () {
+        setVal('toggle', this.value);
+        getCurrentVal('toggle');
+    });
+
+    function scheduleButton(value) {
+        var boxes = $('.table-check :checked');
+        console.log(boxes);
+
+        boxes.attr('state', value);
+        // clear checkboxes
+        boxes.click();
+
+        var schedule = getSchedule();
+        console.log(schedule);
+        setVal('schedule', schedule);
+    }
+
+    function getSchedule() {
+        // create schedule array
+        var schedule = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        for(i=0; i<24; i++){
+            var label = $('label[for=check_' + i + ']').parent();
+            label.removeClass("off day night");
+            if ( $('#check_' + i).attr('state') == 'off' ){
+                schedule[i] = 0;
+                // set class for label element
+                label.addClass('off');
+            } else if ( $('#check_' + i).attr('state') == 'day' ) {
+                schedule[i] = 1;
+                // set class for label element
+                label.addClass('day');
+            } else if ( $('#check_' + i).attr('state') == 'night' ) {
+                schedule[i] = 2;
+                // set class for label element
+                label.addClass('night');
+            }
+        }
+        return schedule;
+    }
+
+    function setVal(key, value) {
+        console.log('set ' + key + ' to ' + value);
+        $.post('/' + key, {"value": value}, function(data,status,xhr){
+                console.log('status ' + status);
+                console.log(data);
+            },
+            'json').fail(function(){
+                console.log('post fail');
+        });
+    }
+
+    function getCurrentVal(key) {
+        $.get('/' + key, function(data){
+            console.log('got value for ' + key + data['value']);
+            if (key != 'schedule'){
+                $('label[for="' + key + '"] .currentval').text(data['value']);
+            } else {
+                console.log('Get current schedule');
+                console.log(data['value']);
+
+                for(i=0; i<24; i++){
+                    var label = $('label[for=check_' + i + ']').parent();
+                    label.removeClass("off day night");
+
+                    $('#check_' + i).attr('state', data['value'][i])
+                    // set class for label element
+                    label.addClass(data['value'][i]);
+                }
+            }
+        });
+    }
+
+    $('#setnight_btn').mousedown(function(e){
+        scheduleButton('night');
+    });
+    $('#setday_btn').mousedown(function(e){
+        scheduleButton('day');
+    });
+
+    $('#setoff_btn').mousedown(function(e){
+        scheduleButton('off');
+    });
+
+    getCurrentVal('auto');
+    getCurrentVal('toggle');
+    getCurrentVal('schedule');
+});
+</script>
+</html>
