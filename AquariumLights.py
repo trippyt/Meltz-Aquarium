@@ -110,7 +110,6 @@ class LightControl(object):
                 'off_hour': self._off_hour,
                 'schedule': [TOGGLE_MODE_STR[i] for i in self._schedule]
                 }
-#bla bla bla
 
     def daylights_on(self): #Activates Daylights
         if self._current_status != 'day':
