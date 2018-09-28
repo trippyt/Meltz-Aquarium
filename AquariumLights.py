@@ -83,42 +83,6 @@ class LightControl(object):
 
         self._toggle = int(new_val)
 
-    @property
-    def day_hour(self):
-        return self._day_hour
-
-    @day_hour.setter
-    def day_hour(self, new_val):
-        if int(new_val) >= 24:
-            raise(Exception('AquariumLights: Invalid day_hour!'))
-
-        self._day_hour = int(new_val)
-        self.schedule_range()
-
-    @property
-    def night_hour(self):
-        return self._night_hour
-
-    @night_hour.setter
-    def night_hour(self, new_val):
-        if int(new_val) >= 24:
-            raise(Exception('AquariumLights: Invalid night_hour!'))
-
-        self._night_hour = int(new_val)
-        self.schedule_range()
-
-    @property
-    def off_hour(self):
-        return self._off_hour
-
-    @off_hour.setter
-    def off_hour(self, new_val):
-        if int(new_val) >= 24:
-            raise(Exception('AquariumLights: Invalid off_hour!'))
-
-        self._off_hour = int(new_val)
-        self.schedule_range()
-
     def schedule_range(self):
     # set up schedule based on day_hour, night_hour, off_hour
         if self._day_hour <= self._night_hour <= self._off_hour:
