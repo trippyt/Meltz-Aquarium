@@ -37,9 +37,6 @@ class LightControl(object):
     def __init__(self): #Default settings
         self._auto = True
         self._toggle = OFF
-        self._day_hour = 7
-        self._night_hour = 21
-        self._off_hour = 23
         self._current_status = 'unknown'
         self._schedule = [OFF for i in range(24)]
         
