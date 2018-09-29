@@ -83,31 +83,9 @@ class LightControl(object):
 
         self._toggle = int(new_val)
 
-    def schedule_range(self):
-    # set up schedule based on day_hour, night_hour, off_hour
-        if self._day_hour <= self._night_hour <= self._off_hour:
-            self._schedule = [OFF for i in range(0, self._day_hour)] +\
-                             [DAY for i in range(self._day_hour, self._night_hour)] +\
-                             [NIGHT for i in range(self._night_hour, self._off_hour)] +\
-                             [OFF for i in range(self._off_hour, 24)]
-        elif self._day_hour <= self._off_hour <= self._night_hour:
-            self._schedule = [NIGHT for i in range(0, self._day_hour)] +\
-                             [DAY for i in range(self._day_hour, self._off_hour)] +\
-                             [OFF for i in range(self._off_hour, self._night_hour)] +\
-                             [NIGHT for i in range(self._night_hour, 24)]
-        elif self._off_hour <= self._day_hour <= self._night_hour:
-            self._schedule = [NIGHT for i in range(0, self._off_hour)] +\
-                             [OFF for i in range(self._off_hour, self._day_hour)] +\
-                             [DAY for i in range(self._day_hour, self._night_hour)] +\
-                             [NIGHT for i in range(self._night_hour, 24)]
-
-
     def get_config_state(self):
         return {'auto': self._auto,
                 'toggle': TOGGLE_MODE_STR[self._toggle],
-                'day_hour': self._day_hour,
-                'night_hour': self._night_hour,
-                'off_hour': self._off_hour,
                 'schedule': [TOGGLE_MODE_STR[i] for i in self._schedule]
                 }
 
