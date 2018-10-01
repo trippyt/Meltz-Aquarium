@@ -84,23 +84,23 @@ class LightsMenu(MenuOption):
  
         menu.write_row(2, chr(4) + bottom_row)
 
-        def get_schedule():
-            resp = self.session.post('http://trippyt.hopto.org/login',data=payload)
+    def get_schedule(self):
+            resp = self.session.get('http://trippyt.hopto.org/schedule')
             if '<form action="/login" method="POST">' in resp.text:
                 self.web_login()
-            resp = self.session.get('http://trippyt.hopto.org/schedule')
+                resp = self.session.get('http://trippyt.hopto.org/schedule')
             light_state = resp.json()
             return(light_state['value'])
 
-        def set_schedule(self, new_sch):
-            resp = self.session.get('http://trippyt.hopto.org/schedule/schedule')
-            if '<form action="/login" method="POST">' in resp.text:
-                self.web_login()
-                
-            light_state = {'value': new_sch}
-            self.session.post('http://trippyt.hopto.org/schedule', data=light_state)
+    def set_schedule(self, new_sch):
+        resp = self.session.get('http://trippyt.hopto.org/schedule/schedule')
+        if '<form action="/login" method="POST">' in resp.text:
+            self.web_login()
+            
+        light_state = {'value': new_sch}
+        self.session.post('http://trippyt.hopto.org/schedule', data=light_state)
 
-        def web_login(self):
-            self.session = requests.Session()
-            payload = {'username':'admin','password':'password'}
-            r = self.session.post('http://trippyt.hopto.org/login',data=payload)
+    def web_login(self):
+        self.session = requests.Session()
+        payload = {'username':'admin','password':'password'}
+        r = self.session.post('http://trippyt.hopto.org/login',data=payload)
