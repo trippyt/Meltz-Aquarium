@@ -86,9 +86,10 @@ class LightsMenu(MenuOption):
 
         def get_schedule():
             resp = self.session.post('http://trippyt.hopto.org/login',data=payload)
-            return(resp)
-            stt = self.session.get('http://trippyt.hopto.org/schedule')
-            light_state = stt.json()
+            if '<form action="/login" method="POST">' in resp.text:
+                self.web_login()
+            resp = self.session.get('http://trippyt.hopto.org/schedule')
+            light_state = resp.json()
             return(light_state['value'])
 
         def set_schedule(self, new_sch):
@@ -96,13 +97,10 @@ class LightsMenu(MenuOption):
             if '<form action="/login" method="POST">' in resp.text:
                 self.web_login()
                 
-            light_state['value'][4] = 'day'
+            light_state = {'value': new_sch}
             self.session.post('http://trippyt.hopto.org/schedule', data=light_state)
-            resp = self.session.get('http://trippyt.hopto.org/schedule')
-            light_state = resp.json()
-            return(light_state['value'])
 
         def web_login(self):
             self.session = requests.Session()
             payload = {'username':'admin','password':'password'}
-            r = self.session.post('http://trippyt.hopto.org/login',data=payload
+            r = self.session.post('http://trippyt.hopto.org/login',data=payload)
