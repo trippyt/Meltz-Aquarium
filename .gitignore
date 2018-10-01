@@ -1,0 +1,18 @@
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*$py.class
+*.log
+*__pycache__/
+
+
+
+*.log.*
+Logs/
+*_log/
+
+# Visual Studio
+*.vpwhist
+.pylintrc
+*.code-workspace
+.vscode/*
+.vs/*
