@@ -49,7 +49,7 @@ class LightControl(object):
     def schedule(self, new_val):
         logger.debug('set schedule ' + str(new_val))
         if len(new_val) != 24:
-            raise(Exception('Schedule length must be 24!'))
+            raise(Exception('Schedule length must be 24, but had a length of {}!'.format(new_val)))
 
         if isinstance(new_val[0], str):
             if new_val[0] in TOGGLE_MODE_STR:

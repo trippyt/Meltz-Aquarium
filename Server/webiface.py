@@ -80,6 +80,8 @@ def handleattr(key):
     elif request.method == "POST":
         if len(request.form.getlist('value[]')) > 0:
             new_val = [i for i in request.form.getlist('value[]')]
+        elif len(request.form.getlist('value')) > 0:
+            new_val = [i for i in request.form.getlist('value')]
         else:
             new_val = request.form.get('value',None)
         setattr(lights_control, key, new_val)
@@ -93,4 +95,4 @@ def logout():
 if __name__ == "__main__":
     app.debug = True
     app.secret_key = os.urandom(12)
-    app.run(host='0.0.0.0', port=443, debug=True, ssl_context='adhoc')
+    app.run(host='0.0.0.0', port=80, debug=True)
