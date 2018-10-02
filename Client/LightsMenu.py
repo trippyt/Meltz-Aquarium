@@ -1,6 +1,7 @@
 import time
 import AquariumLights
 from dot3k.menu import MenuOption
+import requests
  
 class LightsMenu(MenuOption):
     def __init__(self, aquarium_lights): #Default settings
@@ -103,4 +104,4 @@ class LightsMenu(MenuOption):
     def web_login(self):
         self.session = requests.Session()
         payload = {'username':'admin','password':'password'}
-        r = self.session.post('http://trippyt.hopto.org/login',data=payload)
+        self.session.post('http://trippyt.hopto.org/login',data=payload)
