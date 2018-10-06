@@ -1,7 +1,14 @@
 import time
-import AquariumLights
-from dot3k.menu import MenuOption
 import requests
+
+# Toggle Modes
+OFF = 0
+DAY = 1
+NIGHT = 2
+VALID_TOGGLE_MODES = [OFF, DAY, NIGHT]
+
+TOGGLE_MODE_STR = ['off', 'day', 'night']
+MODE_STR_TO_NUM = {'off': OFF, 'night': NIGHT, 'day': DAY}
  
 class LightsMenu(MenuOption):
     def __init__(self, aquarium_lights): #Default settings
@@ -9,9 +16,8 @@ class LightsMenu(MenuOption):
         self.web_login()
         self.running = False
         self.is_setup = False
-        self.lights_control = aquarium_lights
         self.curr_idx = 0
-        self.curr_val = self.lights_control._schedule[ self.curr_idx ]
+        self.curr_mode = self.lights_control._schedule[ self.curr_idx ]
         MenuOption.__init__(self)
  
     def begin(self):
@@ -21,7 +27,7 @@ class LightsMenu(MenuOption):
     def setup(self, config):
         MenuOption.setup(self, config)
         self.curr_idx = 0
-        self.curr_val = self.lights_control._schedule[ self.curr_idx ]
+        self.curr_mode = self.lights_control._schedule[ self.curr_idx ]
        
     def cleanup(self):
         self.running = False
@@ -29,28 +35,26 @@ class LightsMenu(MenuOption):
         self.is_setup = False
  
     def left(self):
-        val = (self.curr_val - 1) % len(AquariumLights.VALID_TOGGLE_MODES)
+        val = (self.curr_mode - 1) % len(VALID_TOGGLE_MODES)
         sch = self.lights_control._schedule
         sch[ self.curr_idx ] = val
         self.lights_control.schedule = sch
         return True
        
     def right(self):
-        val = (self.curr_val + 1) % len(AquariumLights.VALID_TOGGLE_MODES)
-        sch = self.lights_control._schedule
-        sch[ self.curr_idx ] = val
-        self.lights_control.schedule = sch
+        self.curr_mode = (self.curr_mode + 1) % len(VALID_TOGGLE_MODES)
+        self.set_schedule()
         return True
        
  
     def up(self):
         self.curr_idx = (self.curr_idx - 1) % len(self.lights_control._schedule)
-        self.curr_val = self.lights_control._schedule[ self.curr_idx ]
+        self.curr_mode = self.lights_control._schedule[ self.curr_idx ]
         return True
  
     def down(self):
         self.curr_idx = (self.curr_idx + 1) % len(self.lights_control._schedule)
-        self.curr_val = self.lights_control._schedule[ self.curr_idx ]
+        self.curr_mode = self.lights_control._schedule[ self.curr_idx ]
         return True
  
     def redraw(self, menu):
@@ -76,11 +80,11 @@ class LightsMenu(MenuOption):
             menu.clear_row(2)
             return True
  
-        self.curr_val = self.lights_control._schedule[ self.curr_idx ]
+        self.curr_mode = self.lights_control._schedule[ self.curr_idx ]
  
         bottom_row = ''
 
-        mode_str = AquariumLights.TOGGLE_MODE_STR[ self.curr_val ].upper()
+        mode_str = TOGGLE_MODE_STR[ self.curr_mode ].upper()
         bottom_row = '{:02}:00 \x05Mode:{}'.format(self.curr_idx, mode_str)
  
         menu.write_row(2, chr(4) + bottom_row)

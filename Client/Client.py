@@ -14,4 +14,3 @@ session.post('http://trippyt.hopto.org/schedule', data=light_state)
 resp = session.get('http://trippyt.hopto.org/schedule')
 light_state = resp.json()
 print(light_state['value'])
-
