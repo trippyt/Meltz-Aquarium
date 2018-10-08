@@ -42,8 +42,9 @@ class LightsMenu(MenuOption):
         return True
        
     def right(self):
-        self.curr_mode = (self.curr_mode + 1) % len(VALID_TOGGLE_MODES)
-        self.set_schedule()
+        self.curr_mode = (self.curr_mode + 1) % len(MODE_STR_TO_NUM)
+        new_sch = self.curr_mode
+        self.set_schedule(new_sch)
         return True
        
  
