@@ -1,5 +1,7 @@
 import sys
 import os
+import time
+import threading
 import AquariumLights
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify, redirect, url_for
 from sqlalchemy.orm import sessionmaker
@@ -94,7 +96,17 @@ def logout():
     session['logged_in'] = False
     return main()
 
+def periodic_check_handler(wait_time):
+    """
+    Function to periodically call lights_control.check()
+    """
+    while True:
+        time.sleep(wait_time)
+        lights_control.check()
+
 if __name__ == "__main__":
     app.debug = True
     app.secret_key = os.urandom(12)
+    check_thread = threading.Thread(target=periodic_check_handler, args=(1,), daemon=True)
+    check_thread.start()
     app.run(host='0.0.0.0', port=80, debug=True)
