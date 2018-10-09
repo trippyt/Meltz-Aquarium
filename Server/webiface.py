@@ -75,7 +75,7 @@ def handleattr(key):
 
     if request.method == "GET":
         value = lights_control.get_config_state().get(key,'Unknown')
-        app.logger.debug(f"GET Key: {key}, value: {value}")
+        app.logger.debug("GET Key: {}, value: {}".format(key, value))
         return jsonify({'value': value})
 
     elif request.method == "POST":
@@ -85,7 +85,7 @@ def handleattr(key):
             new_val = [i for i in request.form.getlist('value')]
         else:
             new_val = request.form.get('value',None)
-        app.logger.debug(f"POST Key: {key}, value: {new_val}")
+        app.logger.debug("POST Key: {}, value: {}".format(key, new_val))
         setattr(lights_control, key, new_val)
         return jsonify('success')
 
