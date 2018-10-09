@@ -75,15 +75,17 @@ def handleattr(key):
 
     if request.method == "GET":
         value = lights_control.get_config_state().get(key,'Unknown')
+        app.logger.debug(f"GET Key: {key}, value: {value}")
         return jsonify({'value': value})
 
     elif request.method == "POST":
         if len(request.form.getlist('value[]')) > 0:
             new_val = [i for i in request.form.getlist('value[]')]
-        elif len(request.form.getlist('value')) > 0:
+        elif len(request.form.getlist('value')) > 1:
             new_val = [i for i in request.form.getlist('value')]
         else:
             new_val = request.form.get('value',None)
+        app.logger.debug(f"POST Key: {key}, value: {new_val}")
         setattr(lights_control, key, new_val)
         return jsonify('success')
 
