@@ -43,7 +43,7 @@ class TimeoutManager():
             # Turn backlight off
             backlight.off()
 
-lights_menu = LightsMenu
+lights_menu = LightsMenu()
 #Unordered menu
 menu = Menu(
     structure={
