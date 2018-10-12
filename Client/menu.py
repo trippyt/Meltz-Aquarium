@@ -2,7 +2,6 @@ import sys
 import os
 import time
 import AstralMenu
-import webiface
 import threading
 import logging
 import dothat.backlight as backlight
@@ -44,8 +43,7 @@ class TimeoutManager():
             # Turn backlight off
             backlight.off()
 
-lights_control = webiface.lights_control
-lights_menu = LightsMenu(lights_control)
+lights_menu = LightsMenu
 #Unordered menu
 menu = Menu(
     structure={
@@ -114,13 +112,7 @@ def handle_cancel(pin):
     menu.cancel()
     tm.button_press()
 
-webiface.app.secret_key = os.urandom(12)
-webworker = lambda: webiface.app.run(host='0.0.0.0', port=80)
-webthread = threading.Thread(target=webworker, daemon=True)
-webthread.start()
-
 while True:
-    lights_control.check()
     menu.redraw()
     tm.check_timeout()
     sleep(3.0 / 20)
