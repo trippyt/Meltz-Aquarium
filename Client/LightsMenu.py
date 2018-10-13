@@ -59,18 +59,7 @@ class LightsMenu(MenuOption):
         self.curr_idx = (self.curr_idx + 1) % len(self.get_schedule())
         self.curr_mode = self.get_schedule()[self.curr_idx]
         return True
-       
- 
-    def up(self):
-        self.curr_idx = (self.curr_idx - 1) % len(self.get_schedule())
-        self.curr_mode = self.lights_control._schedule[ self.curr_idx ]
-        return True
- 
-    def down(self):
-        self.curr_idx = (self.curr_idx + 1) % len(self.get_schedule())
-        self.curr_mode = self.lights_control._schedule[ self.curr_idx ]
-        return True
- 
+     
     def redraw(self, menu):
         if not self.running:
             return False
