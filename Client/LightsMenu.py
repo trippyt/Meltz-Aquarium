@@ -62,12 +62,12 @@ class LightsMenu(MenuOption):
        
  
     def up(self):
-        self.curr_idx = (self.curr_idx - 1) % len(self.lights_control._schedule)
+        self.curr_idx = (self.curr_idx - 1) % len(self.get_schedule())
         self.curr_mode = self.lights_control._schedule[ self.curr_idx ]
         return True
  
     def down(self):
-        self.curr_idx = (self.curr_idx + 1) % len(self.lights_control._schedule)
+        self.curr_idx = (self.curr_idx + 1) % len(self.get_schedule())
         self.curr_mode = self.lights_control._schedule[ self.curr_idx ]
         return True
  
@@ -94,7 +94,7 @@ class LightsMenu(MenuOption):
             menu.clear_row(2)
             return True
  
-        self.curr_mode = self.get_schedule[ self.curr_idx ]
+        self.curr_mode = self.get_schedule()[ self.curr_idx ]
  
         bottom_row = ''
 
