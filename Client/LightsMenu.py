@@ -17,7 +17,7 @@ class LightsMenu(MenuOption):
         self.running = False
         self.is_setup = False
         self.curr_idx = 0
-        self.curr_mode = self.lights_control._schedule[ self.curr_idx ]
+       |
         MenuOption.__init__(self)
  
     def begin(self):
@@ -27,7 +27,9 @@ class LightsMenu(MenuOption):
     def setup(self, config):
         MenuOption.setup(self, config)
         self.curr_idx = 0
-        self.curr_mode = self.lights_control._schedule[ self.curr_idx ]
+        schedule = self.get_schedule()
+        mode_str = schedule[self.curr_idx]
+        self.curr_mode = MODE_STR_TO_NUM[mode_str]
        
     def cleanup(self):
         self.running = False
@@ -35,16 +37,27 @@ class LightsMenu(MenuOption):
         self.is_setup = False
  
     def left(self):
-        val = (self.curr_mode - 1) % len(VALID_TOGGLE_MODES)
-        sch = self.lights_control._schedule
-        sch[ self.curr_idx ] = val
-        self.lights_control.schedule = sch
+        self.curr_mode = (self.curr_mode - 1) % len(VALID_TOGGLE_MODES)
+        new_sch = self.get_schedule()
+        new_sch[self.curr_idx] = TOGGLE_MODE_STR[self.curr_mode]
+        self.set_schedule(new_sch)
         return True
        
     def right(self):
-        self.curr_mode = (self.curr_mode + 1) % len(MODE_STR_TO_NUM)
-        new_sch = self.curr_mode
+        self.curr_mode = (self.curr_mode + 1) % len(VALID_TOGGLE_MODES)
+        new_sch = self.get_schedule()
+        new_sch[self.curr_idx] = TOGGLE_MODE_STR[self.curr_mode]
         self.set_schedule(new_sch)
+        return True
+
+    def up(self):
+        self.curr_idx = (self.curr_idx - 1) % len(self.get_schedule())
+        self.curr_mode = self.get_schedule()[self.curr_idx]
+        return True
+
+    def down(self):
+        self.curr_idx = (self.curr_idx + 1) % len(self.get_schedule())
+        self.curr_mode = self.get_schedule()[self.curr_idx]
         return True
        
  
@@ -81,7 +94,7 @@ class LightsMenu(MenuOption):
             menu.clear_row(2)
             return True
  
-        self.curr_mode = self.lights_control._schedule[ self.curr_idx ]
+        self.curr_mode = self.get_schedule[ self.curr_idx ]
  
         bottom_row = ''
 
