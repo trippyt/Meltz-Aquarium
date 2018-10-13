@@ -59,7 +59,7 @@ class LightsMenu(MenuOption):
         self.curr_idx = (self.curr_idx + 1) % len(self.get_schedule())
         self.curr_mode = self.get_schedule()[self.curr_idx]
         return True
-     
+
     def redraw(self, menu):
         if not self.running:
             return False
@@ -83,7 +83,7 @@ class LightsMenu(MenuOption):
             menu.clear_row(2)
             return True
  
-        mode_str = self.curr_mode = self.get_schedule()[ self.curr_idx ]
+        mode_str =  self.get_schedule()[ self.curr_idx ]
         self.curr_mode = MODE_STR_TO_NUM[mode_str]
  
         bottom_row = ''
