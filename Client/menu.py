@@ -4,7 +4,6 @@ import time
 import AstralMenu
 import threading
 import logging
-import LightsMenu
 import dothat.backlight as backlight
 import dothat.lcd as lcd
 import dothat.touch as nav
