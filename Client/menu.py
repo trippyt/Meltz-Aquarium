@@ -4,6 +4,7 @@ import time
 import AstralMenu
 import threading
 import logging
+import LightsMenu
 import dothat.backlight as backlight
 import dothat.lcd as lcd
 import dothat.touch as nav
@@ -27,7 +28,7 @@ logger = logging.getLogger("AquariumLights")
 Bl = Backlight(backlight)
 
 class TimeoutManager():
-    def __init__(self, aquarium_lights):
+    def __init__(self):
         self.TIMEOUT = 5
         self.last_button_press = time()
 
