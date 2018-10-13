@@ -17,7 +17,6 @@ class LightsMenu(MenuOption):
         self.running = False
         self.is_setup = False
         self.curr_idx = 0
-       |
         MenuOption.__init__(self)
  
     def begin(self):
