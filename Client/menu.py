@@ -27,7 +27,7 @@ logger = logging.getLogger("AquariumLights")
 Bl = Backlight(backlight)
 
 class TimeoutManager():
-    def __init__(self):
+    def __init__(self, aquarium_lights):
         self.TIMEOUT = 5
         self.last_button_press = time()
 
