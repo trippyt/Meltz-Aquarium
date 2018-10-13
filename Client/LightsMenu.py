@@ -39,14 +39,14 @@ class LightsMenu(MenuOption):
     def left(self):
         self.curr_mode = (self.curr_mode - 1) % len(VALID_TOGGLE_MODES)
         new_sch = self.get_schedule()
-        new_sch[self.curr_idx] = TOGGLE_MODE_STR[int(self.curr_mode)]
+        new_sch[self.curr_idx] = TOGGLE_MODE_STR[self.curr_mode]
         self.set_schedule(new_sch)
         return True
        
     def right(self):
         self.curr_mode = (self.curr_mode + 1) % len(VALID_TOGGLE_MODES)
         new_sch = self.get_schedule()
-        new_sch[self.curr_idx] = TOGGLE_MODE_STR[int(self.curr_mode)]
+        new_sch[self.curr_idx] = TOGGLE_MODE_STR[self.curr_mode]
         self.set_schedule(new_sch)
         return True
 
