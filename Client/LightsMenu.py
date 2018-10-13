@@ -1,5 +1,6 @@
 import time
 import requests
+from dot3k.menu import Menu, MenuOption
 
 # Toggle Modes
 OFF = 0
