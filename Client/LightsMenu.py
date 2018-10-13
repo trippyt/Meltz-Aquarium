@@ -98,7 +98,7 @@ class LightsMenu(MenuOption):
  
         bottom_row = ''
 
-        mode_str = TOGGLE_MODE_STR[ int(self.curr_mode) ].upper()
+        mode_str = TOGGLE_MODE_STR[ self.curr_mode ].upper()
         bottom_row = '{:02}:00 \x05Mode:{}'.format(self.curr_idx, mode_str)
  
         menu.write_row(2, chr(4) + bottom_row)
