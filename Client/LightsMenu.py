@@ -14,7 +14,7 @@ MODE_STR_TO_NUM = {'off': OFF, 'night': NIGHT, 'day': DAY}
 
 loop = asyncio.get_event_loop()
 
-class LightsMenu():
+class LightsMenu(MenuOption):
     def __init__(self):  # Default settings
         self.session = None
         self.running = False
