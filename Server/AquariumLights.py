@@ -132,7 +132,7 @@ class LightControl(object):
 
     def get_config_state(self):
         return {'auto': self._auto,
-                'toggle': TOGGLE_MODE_STR[self._toggle],
+                'toggle': self._toggle,
                 'schedule': [TOGGLE_MODE_STR[i] for i in self._schedule]
                 }
 
