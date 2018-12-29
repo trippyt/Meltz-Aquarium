@@ -19,8 +19,9 @@ VALID_TOGGLE_MODES = [OFF, DAY, NIGHT]
 
 TOGGLE_MODE_STR = ['off', 'day', 'night']
 
-log_file = "logfile{}.log".format(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))
+log_file = "/home/pi/Meltz-Aquarium/Server/Logs/logfile{}.log".format(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))
 #log_file = "/home/pi/Meltz-Aquarium/Server/Logs/logfile{}.log".format(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))
+# "logfile{}.log".format(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))
 logger = logging.getLogger("AquariumLights")
 
 handler = logging.FileHandler(log_file)
