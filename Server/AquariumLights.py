@@ -62,36 +62,36 @@ class LightControl(object):
         return [TOGGLE_MODE_STR[i] for i in self._schedule]
 
     @schedule.setter
-def schedule(self, new_val):
-    logger.debug('set schedule ' + str(new_val))
+    def schedule(self, new_val):
+        logger.debug('set schedule ' + str(new_val))
 
-    # checks input length
-    if len(new_val) != 24:
-        raise(Exception('Schedule length must be 24, but had a length of {}!'.format(new_val)))
+        # checks input length
+        if len(new_val) != 24:
+            raise(Exception('Schedule length must be 24, but had a length of {}!'.format(new_val)))
 
-    # converts input to list of 0,1,2
-    if isinstance(new_val[0], str):
-        if new_val[0] in TOGGLE_MODE_STR:
-            # new_val is "off", "night", "day"
-            self._schedule = [TOGGLE_MODE_STR.index(mode.lower()) for mode in new_val]
+        # converts input to list of 0,1,2
+        if isinstance(new_val[0], str):
+            if new_val[0] in TOGGLE_MODE_STR:
+                # new_val is "off", "night", "day"
+                self._schedule = [TOGGLE_MODE_STR.index(mode.lower()) for mode in new_val]
+            else:
+                # new_val is "0", "1", "2"
+                self._schedule = [int(i)%len(TOGGLE_MODE_STR) for i in new_val]
+        elif isinstance(new_val[0], int):
+            # new_val is 0, 1, 2
+            self._schedule = [i%len(TOGGLE_MODE_STR) for i in new_val]
         else:
-            # new_val is "0", "1", "2"
-            self._schedule = [int(i)%len(TOGGLE_MODE_STR) for i in new_val]
-    elif isinstance(new_val[0], int):
-        # new_val is 0, 1, 2
-        self._schedule = [i%len(TOGGLE_MODE_STR) for i in new_val]
-    else:
-        raise(Exception('Unknown format of Schedule array'))
+            raise(Exception('Unknown format of Schedule array'))
 
-    # storing schedule data
-    # first needa fetch it
-    data = ""
-    with open('pickle.dat', "rb") as file:
-        data = pickle.load(file)
-        data['schedule'] = self._schedule # rewriting existing with current
-    # storing
-    with open('pickle.dat', "wb") as file:
-        pickle.dump(data, file)
+        # storing schedule data
+        # first needa fetch it
+        data = ""
+        with open('pickle.dat', "rb") as file:
+            data = pickle.load(file)
+            data['schedule'] = self._schedule # rewriting existing with current
+        # storing
+        with open('pickle.dat', "wb") as file:
+            pickle.dump(data, file)
 
     @property
     def auto(self):
