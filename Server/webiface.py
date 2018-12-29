@@ -58,8 +58,8 @@ def main():
     templateData = {
         'config_state': lights_control.get_config_state()
     }
-    templateData["config_state"]["toggle"] = lights_control.TOGGLE_MODE_STR[templateDate["config_state"]["toggle"]]
-    templateData["config_state"]["schedule"] = [lights_control.TOGGLE_MODE_STR[i] for i in templateDate["config_state"]["schedule"]]
+    templateData["config_state"]["toggle"] = lights_control.TOGGLE_MODE_STR[templateData["config_state"]["toggle"]]
+    templateData["config_state"]["schedule"] = [lights_control.TOGGLE_MODE_STR[i] for i in templateData["config_state"]["schedule"]]
     # Pass the template data into the template main.html and return it to the user
     return render_template('main.html', **templateData)
 
