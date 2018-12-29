@@ -45,7 +45,7 @@ class LightControl(object):
 
             #saves defaults to a file
             with open('pickle.dat', 'wb') as file:
-                data = (self.get_config_state())
+                data = (self.get_state())
                 pickle.dump(data, file)
         # otherwise, load from a file
         else:
@@ -100,8 +100,8 @@ class LightControl(object):
     @auto.setter
     def auto(self, new_val):
         self._auto = bool(int(new_val) and True)
-# storing auto mode data
-# first needa fetch it
+        # storing auto mode data
+        # first needa fetch it
         data = ""
         with open('pickle.dat', "rb") as file:
             data = pickle.load(file)
@@ -118,8 +118,8 @@ class LightControl(object):
     def toggle(self, new_val):
         if int(new_val) not in VALID_TOGGLE_MODES:
             raise(Exception('AquariumLights: Invalid toggle mode!'))
-# storing toggle mode data
-# first needa fetch it
+        # storing toggle mode data
+        # first needa fetch it
         data = ""
         with open('pickle.dat', "rb") as file:
             data = pickle.load(file)
@@ -130,10 +130,16 @@ class LightControl(object):
 
         self._toggle = int(new_val)
 
-    def get_config_state(self):
+    def get_state(self):
         return {'auto': self._auto,
                 'toggle': self._toggle,
                 'schedule': self._schedule
+                }
+
+    def get_config_state(self):
+        return {'auto': self._auto,
+                'toggle': TOGGLE_MODE_STR[self._toggle],
+                'schedule': [TOGGLE_MODE_STR[i] for i in self._schedule]
                 }
 
     def daylights_on(self): #Activates Daylights
