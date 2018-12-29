@@ -1,7 +1,7 @@
 import time
 from datetime import datetime
 import logging
-import pickle
+import pickle, os
 try:
     import RPi.GPIO as GPIO
 except:
@@ -19,8 +19,8 @@ VALID_TOGGLE_MODES = [OFF, DAY, NIGHT]
 
 TOGGLE_MODE_STR = ['off', 'day', 'night']
 
-log_file = "/home/pi/Meltz-Aquarium/Server/Logs/logfile{}.log".format(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))
-#log_file = r"c:\temp\aqlog.log"
+log_file = "logfile{}.log".format(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))
+#log_file = "/home/pi/Meltz-Aquarium/Server/Logs/logfile{}.log".format(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))
 logger = logging.getLogger("AquariumLights")
 
 handler = logging.FileHandler(log_file)
@@ -34,11 +34,26 @@ for i in range(1):
 
 
 class LightControl(object):
-    def __init__(self): #Default settings
+    def __init__(self):  # Default settings
+    # if file doesn't exist, these are defaults
+    if not os.path.isfile('pickle.dat'):
         self._auto = True
         self._toggle = OFF
         self._current_status = 'unknown'
         self._schedule = [OFF for i in range(24)]
+
+        #saves defaults to a file
+        with open('pickle.dat', 'wb') as file:
+            data = (self.get_config_state())
+            pickle.dump(data, file)
+    # otherwise, load from a file
+    else:
+        with open('pickle.dat', "rb") as file:
+            data = pickle.load(file)
+            self._auto = data['auto']
+            self._toggle = data['toggle']
+            self._current_status = 'unknown' # what about this?
+            self._schedule = data['schedule']
         
 
     @property
@@ -46,23 +61,36 @@ class LightControl(object):
         return [TOGGLE_MODE_STR[i] for i in self._schedule]
 
     @schedule.setter
-    def schedule(self, new_val):
-        logger.debug('set schedule ' + str(new_val))
-        if len(new_val) != 24:
-            raise(Exception('Schedule length must be 24, but had a length of {}!'.format(new_val)))
+def schedule(self, new_val):
+    logger.debug('set schedule ' + str(new_val))
 
-        if isinstance(new_val[0], str):
-            if new_val[0] in TOGGLE_MODE_STR:
-                # schedule array is "off", "night", "day"
-                self._schedule = [TOGGLE_MODE_STR.index(mode.lower()) for mode in new_val]
-            else:
-                # schedule array is "0", "1", "2"
-                self._schedule = [int(i)%len(TOGGLE_MODE_STR) for i in new_val]
-        elif isinstance(new_val[0], int):
-            # schedule array is 0, 1, 2
-            self._schedule = [i%len(TOGGLE_MODE_STR) for i in new_val]
+    # checks input length
+    if len(new_val) != 24:
+        raise(Exception('Schedule length must be 24, but had a length of {}!'.format(new_val)))
+
+    # converts input to list of 0,1,2
+    if isinstance(new_val[0], str):
+        if new_val[0] in TOGGLE_MODE_STR:
+            # new_val is "off", "night", "day"
+            self._schedule = [TOGGLE_MODE_STR.index(mode.lower()) for mode in new_val]
         else:
-            raise(Exception('Unknown format of Schedule array'))
+            # new_val is "0", "1", "2"
+            self._schedule = [int(i)%len(TOGGLE_MODE_STR) for i in new_val]
+    elif isinstance(new_val[0], int):
+        # new_val is 0, 1, 2
+        self._schedule = [i%len(TOGGLE_MODE_STR) for i in new_val]
+    else:
+        raise(Exception('Unknown format of Schedule array'))
+
+    # storing schedule data
+    # first needa fetch it
+    data = ""
+    with open('pickle.dat', "rb") as file:
+        data = pickle.load(file)
+        data['schedule'] = self._schedule # rewriting existing with current
+    # storing
+    with open('pickle.dat', "wb") as file:
+        pickle.dump(data, file)
 
     @property
     def auto(self):
@@ -71,6 +99,15 @@ class LightControl(object):
     @auto.setter
     def auto(self, new_val):
         self._auto = bool(int(new_val) and True)
+# storing auto mode data
+# first needa fetch it
+        data = ""
+        with open('pickle.dat', "rb") as file:
+            data = pickle.load(file)
+            data['auto'] = self._auto # rewriting existing with current
+        # storing
+        with open('pickle.dat', "wb") as file:
+            pickle.dump(data, file)
 
     @property
     def toggle(self):
@@ -80,6 +117,15 @@ class LightControl(object):
     def toggle(self, new_val):
         if int(new_val) not in VALID_TOGGLE_MODES:
             raise(Exception('AquariumLights: Invalid toggle mode!'))
+# storing toggle mode data
+# first needa fetch it
+        data = ""
+        with open('pickle.dat', "rb") as file:
+            data = pickle.load(file)
+            data['toggle'] = self._auto # rewriting existing with current
+        # storing
+        with open('pickle.dat', "wb") as file:
+            pickle.dump(data, file)
 
         self._toggle = int(new_val)
 
