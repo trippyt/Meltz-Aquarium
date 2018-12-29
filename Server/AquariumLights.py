@@ -37,24 +37,24 @@ for i in range(1):
 class LightControl(object):
     def __init__(self):  # Default settings
     # if file doesn't exist, these are defaults
-    if not os.path.isfile('pickle.dat'):
-        self._auto = True
-        self._toggle = OFF
-        self._current_status = 'unknown'
-        self._schedule = [OFF for i in range(24)]
+        if not os.path.isfile('pickle.dat'):
+            self._auto = True
+            self._toggle = OFF
+            self._current_status = 'unknown'
+            self._schedule = [OFF for i in range(24)]
 
-        #saves defaults to a file
-        with open('pickle.dat', 'wb') as file:
-            data = (self.get_config_state())
-            pickle.dump(data, file)
-    # otherwise, load from a file
-    else:
-        with open('pickle.dat', "rb") as file:
-            data = pickle.load(file)
-            self._auto = data['auto']
-            self._toggle = data['toggle']
-            self._current_status = 'unknown' # what about this?
-            self._schedule = data['schedule']
+            #saves defaults to a file
+            with open('pickle.dat', 'wb') as file:
+                data = (self.get_config_state())
+                pickle.dump(data, file)
+        # otherwise, load from a file
+        else:
+            with open('pickle.dat', "rb") as file:
+                data = pickle.load(file)
+                self._auto = data['auto']
+                self._toggle = data['toggle']
+                self._current_status = 'unknown' # what about this?
+                self._schedule = data['schedule']
         
 
     @property
