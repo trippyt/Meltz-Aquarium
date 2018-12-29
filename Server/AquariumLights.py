@@ -133,7 +133,7 @@ class LightControl(object):
     def get_config_state(self):
         return {'auto': self._auto,
                 'toggle': self._toggle,
-                'schedule': [TOGGLE_MODE_STR[i] for i in self._schedule]
+                'schedule': self._schedule
                 }
 
     def daylights_on(self): #Activates Daylights
