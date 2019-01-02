@@ -116,19 +116,23 @@ class LightControl(object):
 
     @toggle.setter
     def toggle(self, new_val):
+        # varifying the input
         if int(new_val) not in VALID_TOGGLE_MODES:
             raise(Exception('AquariumLights: Invalid toggle mode!'))
-        # storing toggle mode data
+
+        # setting
+        self._toggle = int(new_val)
+
+        # storing
         # first needa fetch it
         data = ""
         with open('pickle.dat', "rb") as file:
             data = pickle.load(file)
-            data['toggle'] = self._auto # rewriting existing with current
-        # storing
+            data['toggle'] = self._toggle # rewriting existing with current
+
+        # storing toggle mode data
         with open('pickle.dat', "wb") as file:
             pickle.dump(data, file)
-
-        self._toggle = int(new_val)
 
     def get_state(self):
         return {'auto': self._auto,
